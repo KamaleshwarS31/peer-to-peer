@@ -24,7 +24,7 @@ app.use(express.json()); // for JSON requests (non-file)
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/uploads', express.static(path.join(__dirname, "uploads")));
-app.use('/uploads/challenges', express.static("uploads/challenges"));
+app.use('/uploads/challenges', express.static(path.join(__dirname, "uploads/challenges")));
 app.use('/api/challenges', challengeRoutes);
 
 
@@ -114,3 +114,4 @@ server.listen(5000, () => console.log("Server running on port 5000"));
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+
