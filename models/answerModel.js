@@ -1,6 +1,6 @@
 const mongoose =  require("mongoose");
 
-const answerSchema = new monogoose.Schema({
+const answerSchema = new mongoose.Schema({
     user: String,
     answerFile: String,
     pinned: { type: Boolean, default: false },
@@ -8,5 +8,6 @@ const answerSchema = new monogoose.Schema({
     score: { type: Number, default: 0 },
     uploadedAt: { type: Date, default: Date.now }
 });
+
 
 module.exports = mongoose.model("Answer", answerSchema);
