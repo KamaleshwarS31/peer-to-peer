@@ -79,36 +79,48 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const challenge = await Challenge.findById(req.params.id).populate("challengeFileId");
+    if (!challenge) return res.status(404).json({ error: "Challenge not found" });
+    res.json(challenge);
+  } catch (err) {
+    console.error("Error fetching challenge:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 router.post("/:id/answers", uploadAnswer.single("answerFile"), async (req, res) => {
   try {
     const challengeId = req.params.id;
     const { user } = req.body;
-    const file = req.file;
 
-    if (!file) return res.status(400).json({ error: "Challenge not found" });
+    if (!req.file) {
+      return res.status(400).json({ error: "No answer file uploaded" });
+    }
 
-    // Calculate score based on how early the user answers
-    const now = new Date();
-    const diffMin = (now - challenge.createdAt) / 60000;
-    let score = 5;
-    if (diffMin < 5) score = 50;
-    else if (diffMin < 10) score = 30;
-    else if (diffMin < 20) score = 10;
+    // Find challenge
+    const challenge = await Challenge.findById(challengeId);
+    if (!challenge) {
+      return res.status(404).json({ error: "Challenge not found" });
+    }
 
+    // Add new answer
     const newAnswer = {
       user,
-      answerFile: `/uploads/answers/${file.filename}`,
+      answerFile: `/uploads/answers/${req.file.filename}`,
       pinned: false,
-      score,
+      score: Math.floor(Math.random() * 50) + 50, // Random score (example)
     };
 
     challenge.answers.push(newAnswer);
     await challenge.save();
 
-    res.status(200).json({ message: "Answer uploaded successfully", aswer: newAnswer });
+    res.status(201).json({ message: "Answer uploaded", answer: newAnswer });
   } catch (err) {
     console.error("Error uploading answer:", err);
-    res.status(500).json({ error: "Error uploading answer" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
