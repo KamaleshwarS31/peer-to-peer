@@ -81,7 +81,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const challenge = await Challenge.findById(req.params.id).populate("challengeFileId");
+    const challenge = await Challenge.findById(req.params.id).populate("challengeFileId").exec();
     if (!challenge) return res.status(404).json({ error: "Challenge not found" });
     res.json(challenge);
   } catch (err) {
@@ -141,3 +141,4 @@ router.put("/:challengeId/answers/:answerIndex/pin", async (req, ans) => {
 });
 
 module.exports = router;
+
